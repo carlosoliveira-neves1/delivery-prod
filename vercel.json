@@ -1,10 +1,14 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(?!.*\\.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|map)$)(.*)",
-      "destination": "/index.html"
+      "src": "/assets/.*",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/.*",
+      "dest": "/index.html"
     }
   ]
 }
