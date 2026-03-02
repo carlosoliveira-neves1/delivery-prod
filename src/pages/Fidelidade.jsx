@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, Users, TrendingUp, Gift, Menu, X } from 'lucide-react';
+import { BarChart3, Users, TrendingUp, Gift, Menu, X, ArrowLeft } from 'lucide-react';
 
 export default function Fidelidade() {
   const [currentTab, setCurrentTab] = useState('dashboard');
@@ -34,15 +34,29 @@ export default function Fidelidade() {
     { id: 'admin', label: 'Configurações', icon: Gift },
   ];
 
+  const handleGoBack = () => {
+    window.history.back();
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Desktop Header */}
+      <div className="hidden lg:sticky lg:top-0 lg:z-40 lg:flex bg-white border-b border-gray-100 px-6 py-4 items-center gap-4">
+        <button onClick={handleGoBack} className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <ArrowLeft className="w-5 h-5 text-gray-700" />
+        </button>
+        <h1 className="font-bold text-lg text-gray-900">Fidelidade</h1>
+      </div>
+
       {/* Mobile Header */}
       <div className="lg:hidden sticky top-0 z-40 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
-        <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2">
-          <Menu className="w-5 h-5" />
+        <button onClick={handleGoBack} className="p-2 -ml-2">
+          <ArrowLeft className="w-5 h-5" />
         </button>
         <span className="font-bold text-sm">Fidelidade</span>
-        <div className="w-5" />
+        <button onClick={() => setSidebarOpen(true)} className="p-2 -mr-2">
+          <Menu className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Mobile Sidebar */}

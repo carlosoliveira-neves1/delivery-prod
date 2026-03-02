@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Gift, TrendingUp, Users, Award, Home } from 'lucide-react';
+import { Gift, TrendingUp, Users, Award, Home, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function FidelidadePublica() {
@@ -33,12 +33,15 @@ export default function FidelidadePublica() {
       <div className="bg-white shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <button onClick={handleGoBack} className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
             <Gift className="w-8 h-8 text-blue-600" />
             <h1 className="text-2xl font-bold text-gray-900">ChegouAí Fidelidade</h1>
           </div>
           <Link to="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
             <Home className="w-5 h-5" />
-            Voltar
+            Home
           </Link>
         </div>
       </div>
