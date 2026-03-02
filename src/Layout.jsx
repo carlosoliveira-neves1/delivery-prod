@@ -14,6 +14,7 @@ import {
   DollarSign,
   Plus,
   BarChart3,
+  Gift,
 } from "lucide-react";
 
 const adminPages = [
@@ -23,6 +24,7 @@ const adminPages = [
   { name: "AdminPricingTables", label: "Preços", icon: DollarSign },
   { name: "AdminReports", label: "Relatórios", icon: BarChart3 },
   { name: "AdminUsers", label: "Usuários", icon: ShieldAlert },
+  { name: "Fidelidade", label: "Fidelidade", icon: Gift },
   { name: "AdminIntegrations", label: "Integrações", icon: LayoutDashboard },
   { name: "AdminSettings", label: "Configurações", icon: Settings },
 ];

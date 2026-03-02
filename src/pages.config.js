@@ -73,6 +73,7 @@ export const PAGES = {
     "AdminProductManagement": AdminProductManagement,
     "AdminPricingTables": AdminPricingTables,
     "AdminReports": AdminReports,
+    "Fidelidade": Fidelidade,
     "Login": Login,
     "Register": Register,
     "StorePreview": StorePreview,
