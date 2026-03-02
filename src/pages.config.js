@@ -56,6 +56,8 @@ import AdminIntegrations from './pages/AdminIntegrations';
 import AdminProductManagement from './pages/AdminProductManagement';
 import AdminPricingTables from './pages/AdminPricingTables';
 import AdminReports from './pages/AdminReports';
+import Fidelidade from './pages/Fidelidade';
+import FidelidadePublica from './pages/FidelidadePublica';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import StorePreview from './pages/StorePreview';
@@ -74,6 +76,7 @@ export const PAGES = {
     "AdminPricingTables": AdminPricingTables,
     "AdminReports": AdminReports,
     "Fidelidade": Fidelidade,
+    "FidelidadePublica": FidelidadePublica,
     "Login": Login,
     "Register": Register,
     "StorePreview": StorePreview,
