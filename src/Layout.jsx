@@ -15,6 +15,7 @@ import {
   Plus,
   BarChart3,
   Gift,
+  Users,
 } from "lucide-react";
 
 const adminPages = [
