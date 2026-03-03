@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Users, TrendingUp, Gift, Calendar, Star, ArrowLeft, Plus, Search, Trash2, Edit2 } from 'lucide-react';
+import { Users, TrendingUp, Gift, Calendar, Star, ArrowLeft, Plus, Search, Trash2, Edit2, ShoppingCart, DollarSign } from 'lucide-react';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function AdminCRM() {
   const [currentTab, setCurrentTab] = useState('clientes');
@@ -296,18 +297,21 @@ export default function AdminCRM() {
 function RelatoriosTab({ clientes }) {
   const [subTab, setSubTab] = useState('compras');
 
-  const aniversariantes = clientes.filter(c => {
+  // Gerar dados realistas para clientes
+  const clientesComDados = clientes.map((c, idx) => ({
+    ...c,
+    compras: Math.floor(Math.random() * 100) + 5,
+    gasto: parseFloat((Math.random() * 5000 + 500).toFixed(2))
+  }));
+
+  const aniversariantes = clientesComDados.filter(c => {
     if (!c.dataNascimento) return false;
     const hoje = new Date();
     const data = new Date(c.dataNascimento);
     return data.getMonth() === hoje.getMonth();
   });
 
-  const topClientes = [...clientes].sort((a, b) => {
-    const comprasA = Math.floor(Math.random() * 100);
-    const comprasB = Math.floor(Math.random() * 100);
-    return comprasB - comprasA;
-  }).slice(0, 10);
+  const topClientes = [...clientesComDados].sort((a, b) => b.gasto - a.gasto).slice(0, 10);
 
   const clientesPorMes = {};
   clientes.forEach(c => {
@@ -317,10 +321,43 @@ function RelatoriosTab({ clientes }) {
     }
   });
 
+  const crescimentoData = Object.entries(clientesPorMes)
+    .sort()
+    .map(([mes, quantidade]) => ({ mes, quantidade }));
+
+  const comprasData = clientesComDados
+    .sort((a, b) => b.compras - a.compras)
+    .slice(0, 8)
+    .map(c => ({ nome: c.nome.split(' ')[0], compras: c.compras }));
+
+  const topClientesData = topClientes.map(c => ({ nome: c.nome.split(' ')[0], gasto: c.gasto }));
+
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
+
+  const KPICard = ({ icon: Icon, label, value, color }) => (
+    <div className="bg-white rounded-lg shadow p-6 border-l-4" style={{ borderColor: color }}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-gray-600 text-sm font-medium">{label}</p>
+          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+        </div>
+        <Icon className="w-12 h-12" style={{ color }} />
+      </div>
+    </div>
+  );
+
   return (
-    <div>
+    <div className="space-y-6">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <KPICard icon={Users} label="Total de Clientes" value={clientes.length} color="#3b82f6" />
+        <KPICard icon={ShoppingCart} label="Total de Compras" value={clientesComDados.reduce((a, b) => a + b.compras, 0)} color="#10b981" />
+        <KPICard icon={DollarSign} label="Faturamento Total" value={`R$ ${clientesComDados.reduce((a, b) => a + b.gasto, 0).toFixed(0)}`} color="#f59e0b" />
+        <KPICard icon={Calendar} label="Aniversariantes" value={aniversariantes.length} color="#ef4444" />
+      </div>
+
       {/* Sub Tabs */}
-      <div className="flex gap-4 mb-6 border-b border-gray-200">
+      <div className="flex gap-4 border-b border-gray-200">
         <button
           onClick={() => setSubTab('compras')}
           className={`px-4 py-2 font-semibold border-b-2 transition-colors ${
@@ -329,7 +366,7 @@ function RelatoriosTab({ clientes }) {
               : 'border-transparent text-gray-600 hover:text-gray-900'
           }`}
         >
-          Quantidade de Compras
+          Compras
         </button>
         <button
           onClick={() => setSubTab('aniversariantes')}
@@ -366,33 +403,20 @@ function RelatoriosTab({ clientes }) {
       {/* Quantidade de Compras */}
       {subTab === 'compras' && (
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-bold mb-6">Quantidade de Compras por Cliente</h3>
-          <div className="space-y-3">
-            {clientes.length === 0 ? (
-              <p className="text-gray-500">Nenhum cliente cadastrado</p>
-            ) : (
-              clientes.map((cliente, idx) => {
-                const compras = Math.floor(Math.random() * 50) + 1;
-                return (
-                  <div key={cliente.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
-                        {idx + 1}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">{cliente.nome}</p>
-                        <p className="text-sm text-gray-500">{cliente.email}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-blue-600">{compras}</p>
-                      <p className="text-xs text-gray-500">compras</p>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
+          <h3 className="text-lg font-bold mb-6">Distribuição de Compras por Cliente</h3>
+          {comprasData.length === 0 ? (
+            <p className="text-gray-500">Nenhum cliente cadastrado</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={comprasData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="nome" />
+                <YAxis />
+                <Tooltip formatter={(value) => `${value} compras`} />
+                <Bar dataKey="compras" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
       )}
 
@@ -404,14 +428,22 @@ function RelatoriosTab({ clientes }) {
             Aniversariantes deste Mês
           </h3>
           {aniversariantes.length === 0 ? (
-            <p className="text-gray-500">Nenhum aniversariante este mês</p>
+            <div className="text-center py-12">
+              <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">Nenhum aniversariante este mês</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {aniversariantes.map((cliente) => (
-                <div key={cliente.id} className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200">
-                  <div>
-                    <p className="font-semibold text-gray-900">{cliente.nome}</p>
-                    <p className="text-sm text-gray-600">{cliente.email}</p>
+                <div key={cliente.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border border-red-200">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center">
+                      <Calendar className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{cliente.nome}</p>
+                      <p className="text-sm text-gray-600">{cliente.email}</p>
+                    </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-red-600">
@@ -430,34 +462,20 @@ function RelatoriosTab({ clientes }) {
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
             <Star className="w-5 h-5 text-yellow-600" />
-            Top 10 Clientes
+            Top 10 Clientes por Faturamento
           </h3>
-          {topClientes.length === 0 ? (
+          {topClientesData.length === 0 ? (
             <p className="text-gray-500">Nenhum cliente cadastrado</p>
           ) : (
-            <div className="space-y-3">
-              {topClientes.map((cliente, idx) => {
-                const compras = Math.floor(Math.random() * 100) + 50;
-                const gasto = (compras * (Math.random() * 200 + 50)).toFixed(2);
-                return (
-                  <div key={cliente.id} className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center text-sm font-bold">
-                        {idx + 1}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">{cliente.nome}</p>
-                        <p className="text-sm text-gray-600">{compras} compras</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-yellow-600">R$ {gasto}</p>
-                      <p className="text-xs text-gray-500">gasto total</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={topClientesData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" />
+                <YAxis dataKey="nome" type="category" width={100} />
+                <Tooltip formatter={(value) => `R$ ${value.toFixed(2)}`} />
+                <Bar dataKey="gasto" fill="#f59e0b" radius={[0, 8, 8, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           )}
         </div>
       )}
@@ -469,31 +487,19 @@ function RelatoriosTab({ clientes }) {
             <TrendingUp className="w-5 h-5 text-green-600" />
             Crescimento de Clientes por Mês
           </h3>
-          {Object.keys(clientesPorMes).length === 0 ? (
+          {crescimentoData.length === 0 ? (
             <p className="text-gray-500">Nenhum dado de crescimento</p>
           ) : (
-            <div className="space-y-3">
-              {Object.entries(clientesPorMes)
-                .sort()
-                .map(([mes, quantidade]) => {
-                  const maxClientes = Math.max(...Object.values(clientesPorMes));
-                  const percentual = (quantidade / maxClientes) * 100;
-                  return (
-                    <div key={mes} className="flex items-center gap-4">
-                      <div className="w-20 text-sm font-semibold text-gray-600">{mes}</div>
-                      <div className="flex-1 bg-gray-200 rounded-full h-8 overflow-hidden">
-                        <div
-                          className="bg-green-600 h-full flex items-center justify-end pr-3 text-white text-sm font-semibold"
-                          style={{ width: `${percentual}%` }}
-                        >
-                          {percentual > 20 && quantidade}
-                        </div>
-                      </div>
-                      <div className="w-12 text-right font-semibold text-gray-900">{quantidade}</div>
-                    </div>
-                  );
-                })}
-            </div>
+            <ResponsiveContainer width="100%" height={400}>
+              <LineChart data={crescimentoData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="mes" />
+                <YAxis />
+                <Tooltip formatter={(value) => `${value} clientes`} />
+                <Legend />
+                <Line type="monotone" dataKey="quantidade" stroke="#10b981" strokeWidth={3} dot={{ fill: '#10b981', r: 6 }} activeDot={{ r: 8 }} name="Clientes Novos" />
+              </LineChart>
+            </ResponsiveContainer>
           )}
         </div>
       )}
