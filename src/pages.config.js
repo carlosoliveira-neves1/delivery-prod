@@ -56,6 +56,7 @@ import AdminIntegrations from './pages/AdminIntegrations';
 import AdminProductManagement from './pages/AdminProductManagement';
 import AdminPricingTables from './pages/AdminPricingTables';
 import AdminReports from './pages/AdminReports';
+import AdminCRM from './pages/AdminCRM';
 import Fidelidade from './pages/Fidelidade';
 import FidelidadePublica from './pages/FidelidadePublica';
 import Login from './pages/Login';
