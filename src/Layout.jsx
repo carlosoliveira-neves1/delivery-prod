@@ -23,6 +23,7 @@ const adminPages = [
   { name: "AdminProductManagement", label: "Produtos", icon: Plus },
   { name: "AdminPricingTables", label: "Preços", icon: DollarSign },
   { name: "AdminReports", label: "Relatórios", icon: BarChart3 },
+  { name: "AdminCRM", label: "CRM", icon: Users },
   { name: "AdminUsers", label: "Usuários", icon: ShieldAlert },
   { name: "Fidelidade", label: "Fidelidade", icon: Gift },
   { name: "AdminIntegrations", label: "Integrações", icon: LayoutDashboard },
