@@ -16,7 +16,7 @@ import {
   BarChart3,
   Gift,
   Users,
-  BuildingStore,
+  Building,
 } from "lucide-react";
 
 const adminPages = [
@@ -29,7 +29,7 @@ const adminPages = [
   { name: "AdminUsers", label: "Usuários", icon: ShieldAlert },
   { name: "Fidelidade", label: "Fidelidade", icon: Gift },
   { name: "AdminIntegrations", label: "Integrações", icon: LayoutDashboard },
-  { name: "AdminCompanies", label: "Empresas", icon: BuildingStore },
+  { name: "AdminCompanies", label: "Empresas", icon: Building },
   { name: "AdminSettings", label: "Configurações", icon: Settings },
 ];
 
