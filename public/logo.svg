@@ -1,0 +1,12 @@
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield background -->
+  <path d="M 60 30 L 60 100 Q 60 140 100 160 Q 140 140 140 100 L 140 30 Z" fill="#FF5544" stroke="#FF5544" stroke-width="2"/>
+  
+  <!-- Heart inside shield -->
+  <path d="M 100 70 C 100 70 85 55 75 55 C 65 55 60 65 60 75 C 60 90 100 120 100 120 C 100 120 140 90 140 75 C 140 65 135 55 125 55 C 115 55 100 70 100 70 Z" fill="white" transform="translate(0, -5) scale(0.7)"/>
+  
+  <!-- Text "ChegouAí" -->
+  <text x="210" y="110" font-family="Arial, sans-serif" font-size="72" font-weight="bold" text-anchor="start" fill="#001F5C">
+    ChegouAí
+  </text>
+</svg>
