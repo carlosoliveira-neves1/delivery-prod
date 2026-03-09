@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { BuildingStore } from "lucide-react";
+import { Building } from "lucide-react";
 import { getUserService } from "@/lib/userService";
 
 const emptyForm = {
@@ -81,7 +81,7 @@ export default function AdminCompanies() {
             Cadastre os códigos que mapeiam para schemas separados no banco.
           </p>
         </div>
-        <BuildingStore className="w-6 h-6 text-emerald-600" />
+        <Building className="w-6 h-6 text-emerald-600" />
       </div>
 
       <Card>
