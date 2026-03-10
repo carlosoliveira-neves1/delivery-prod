@@ -32,10 +32,20 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('global-login: env vars check', {
+      DB_HOST: process.env.DB_HOST ? 'SET' : 'MISSING',
+      DB_USER: process.env.DB_USER ? 'SET' : 'MISSING',
+      DB_PASSWORD: process.env.DB_PASSWORD ? 'SET' : 'MISSING',
+      DB_NAME: process.env.DB_NAME || 'delivery_infra',
+      DB_PORT: process.env.DB_PORT || 5432,
+    });
+
     await ensureConnection();
+    console.log('global-login: connected to DB');
 
     // Permitir login global com qualquer admin de qualquer empresa
     const userRes = await client.query('SELECT * FROM users WHERE email = $1 AND role = $2', [email, 'admin']);
+    console.log('global-login: user query rows', userRes.rows.length);
     if (userRes.rows.length === 0) {
       return res.status(404).json({ error: 'Admin não encontrado' });
     }
@@ -49,6 +59,7 @@ export default async function handler(req, res) {
 
     // Buscar empresa associada
     const companyRes = await client.query('SELECT * FROM companies WHERE id = $1', [user.company_id]);
+    console.log('global-login: company query rows', companyRes.rows.length);
     if (companyRes.rows.length === 0) {
       return res.status(404).json({ error: 'Empresa associada não encontrada' });
     }
@@ -65,6 +76,7 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('API /api/auth/global-login error:', err);
-    return res.status(500).json({ error: 'Erro interno' });
+    console.error('Stack:', err.stack);
+    return res.status(500).json({ error: 'Erro interno', details: err.message });
   }
 }
