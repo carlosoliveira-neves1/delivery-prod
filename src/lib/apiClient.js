@@ -50,6 +50,12 @@ export const api = {
       body: JSON.stringify({ email, password, companyCode }),
     });
   },
+  async globalLogin({ email, password }) {
+    return request('/api/auth/global-login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+  },
 
   // Users
   async registerUser({ name, email, password, companyCode }) {

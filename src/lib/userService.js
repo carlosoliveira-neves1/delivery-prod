@@ -177,6 +177,12 @@ class UserService {
 
   // Criar negócio do usuário
   async createUserBusiness(userId, businessData) {
+    if (this.useApi) {
+      // TODO: implementar API para negócios
+      console.warn('createUserBusiness ainda não implementado no modo API');
+      return null;
+    }
+
     try {
       const businessId = this.generateId();
       

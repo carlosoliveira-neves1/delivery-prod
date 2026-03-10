@@ -64,6 +64,7 @@ import Register from './pages/Register';
 import StorePreview from './pages/StorePreview';
 import BusinessSetup from './pages/BusinessSetup';
 import AdminCompanies from './pages/AdminCompanies';
+import AdminLogin from './pages/AdminLogin';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +80,7 @@ export const PAGES = {
     "AdminReports": AdminReports,
     "AdminCRM": AdminCRM,
     "AdminCompanies": AdminCompanies,
+    "AdminLogin": AdminLogin,
     "Fidelidade": Fidelidade,
     "FidelidadePublica": FidelidadePublica,
     "Login": Login,
