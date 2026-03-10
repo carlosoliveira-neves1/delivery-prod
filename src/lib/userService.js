@@ -5,11 +5,16 @@ class UserService {
     this.db = null;
     this.currentUser = null;
     this.currentCompany = null;
+    this.useApi = !!import.meta.env.VITE_DB_HOST; // Indica se devemos usar API (build-time)
   }
 
   async initialize() {
+    if (this.useApi) {
+      console.log('✅ Usando API (Vercel Functions) para dados');
+      return;
+    }
     try {
-      const { getDatabase } = await import('./localDatabase');
+      const { getDatabase } = await import('./localDatabase.js');
       this.db = getDatabase();
       await this.db.initialize();
     } catch (error) {
@@ -93,13 +98,26 @@ class UserService {
   // Login do usuário
   async loginUser(email, password, companyCode) {
     try {
-      const db = await this.getDb();
       const normalizedCode = this.normalizeCompanyCode(companyCode);
 
       if (!normalizedCode) {
         throw new Error('Informe o código da empresa para prosseguir');
       }
 
+      if (this.useApi) {
+        const { api } = await import('./apiClient.js');
+        const result = await api.login({ email, password, companyCode: normalizedCode });
+        if (result.success) {
+          this.currentUser = result.user;
+          this.currentCompany = result.company;
+          localStorage.setItem('tanamao_current_user', JSON.stringify(this.currentUser));
+          localStorage.setItem('tanamao_current_company', JSON.stringify(this.currentCompany));
+        }
+        return result;
+      }
+
+      // Fallback localStorage
+      const db = await this.getDb();
       const company = await db.getCompanyByCode(normalizedCode);
       if (!company) {
         throw new Error('Empresa não encontrada para o código informado');
@@ -244,13 +262,24 @@ class UserService {
 
   async registerCompany(companyData) {
     try {
-      const db = await this.getDb();
       const normalizedCode = this.normalizeCompanyCode(companyData.code);
 
       if (!normalizedCode) {
         throw new Error('O código da empresa é obrigatório');
       }
 
+      if (this.useApi) {
+        const { api } = await import('./apiClient.js');
+        const company = await api.createCompany({
+          ...companyData,
+          code: normalizedCode,
+          schema_name: companyData.schema_name || 'public'
+        });
+        return company;
+      }
+
+      // Fallback localStorage
+      const db = await this.getDb();
       const existing = await db.getCompanyByCode(normalizedCode);
       if (existing) {
         throw new Error('Já existe uma empresa cadastrada com esse código');
@@ -275,9 +304,15 @@ class UserService {
 
   async createDefaultAdminForCompany(company) {
     const db = await this.getDb();
-    const email = `admin+${company.code.toLowerCase()}@teste.com`;
     const password = 'Carlos190702@@@';
-    const existing = await this.getUserByEmail(email);
+    await this.createCompanyAdmin(company, `admin+${company.code.toLowerCase()}@teste.com`, password);
+    return this.createCompanyAdmin(company, `${company.code.toLowerCase()}@teste.com`, password);
+  }
+
+  async createCompanyAdmin(company, email, password) {
+    const db = await this.getDb();
+    const normalizedEmail = email.toLowerCase();
+    const existing = await this.getUserByEmail(normalizedEmail);
 
     if (existing) {
       return existing;
@@ -286,7 +321,7 @@ class UserService {
     const adminUser = {
       id: this.generateId(),
       name: `${company.name} Admin`,
-      email,
+      email: normalizedEmail,
       password_hash: this.hashPassword(password),
       role: 'admin',
       company_code: company.code,
@@ -305,6 +340,10 @@ class UserService {
   }
 
   async listCompanies() {
+    if (this.useApi) {
+      const { api } = await import('./apiClient.js');
+      return api.listCompanies();
+    }
     const db = await this.getDb();
     return db.getAllCompanies();
   }

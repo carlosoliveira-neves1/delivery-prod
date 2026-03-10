@@ -20,6 +20,7 @@ export default function AdminCompanies() {
   const [form, setForm] = useState(emptyForm);
   const [companies, setCompanies] = useState([]);
   const [status, setStatus] = useState({ isLoading: false, error: null, success: null });
+  const [seedStatus, setSeedStatus] = useState({ isLoading: false, message: null, error: null });
   const normalizedCode = useMemo(() => form.code.trim().toUpperCase(), [form.code]);
   const codeConflict = useMemo(
     () => normalizedCode && companies.some((company) => company.code === normalizedCode),
@@ -64,6 +65,40 @@ export default function AdminCompanies() {
     }
   };
 
+  const seedDemoCompanies = async () => {
+    setSeedStatus({ isLoading: true, message: null, error: null });
+    const service = getUserService();
+    const demoCompanies = [
+      { name: "Padaria Piloto", code: "PADARIA001", schema_name: "padaria_padaria001", description: "Fluxo multitenant" },
+      { name: "Bistrô Central", code: "BISTRO002", schema_name: "bistro_bistro002", description: "Bistrô aberto" },
+      { name: "Restaurante Nova", code: "RESTAURANTE003", schema_name: "restaurante_restaurante003", description: "Exemplo de restaurante" },
+    ];
+
+    const created = [];
+    const errors = [];
+
+    for (const example of demoCompanies) {
+      try {
+        const company = await service.registerCompany(example);
+        created.push(company.code);
+      } catch (error) {
+        errors.push(`${example.code}: ${error.message}`);
+      }
+    }
+
+    let message = null;
+    if (created.length) {
+      message = `Empresas criadas: ${created.join(', ')}`;
+    }
+    if (errors.length) {
+      setSeedStatus({ isLoading: false, message, error: errors.join(' | ') });
+    } else {
+      setSeedStatus({ isLoading: false, message, error: null });
+    }
+
+    loadCompanies();
+  };
+
   const schemaBadge = (schema) => (
     <Badge variant="outline" className="uppercase">
       {schema}
@@ -74,15 +109,31 @@ export default function AdminCompanies() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Empresas globais</h1>
           <p className="text-sm text-gray-500 mt-1">
             Cadastre os códigos que mapeiam para schemas separados no banco.
           </p>
         </div>
-        <Building className="w-6 h-6 text-emerald-600" />
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={seedDemoCompanies}
+            disabled={seedStatus.isLoading}
+            className="px-4 py-2 rounded-lg border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white transition disabled:opacity-60"
+          >
+            {seedStatus.isLoading ? 'Gerando demo...' : 'Criar empresas demo'}
+          </button>
+          <Building className="w-6 h-6 text-emerald-600" />
+        </div>
       </div>
+      {seedStatus.message && (
+        <p className="text-sm text-emerald-600">{seedStatus.message}</p>
+      )}
+      {seedStatus.error && (
+        <p className="text-sm text-red-600">{seedStatus.error}</p>
+      )}
 
       <Card>
         <CardHeader>
