@@ -1,5 +1,16 @@
 import dotenv from 'dotenv';
 import { initializeUserService, getUserService } from '../src/lib/userService.js';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
+
+// Polyfill import.meta.env for Node
+globalThis.import = { meta: { env: process.env } };
+
+console.log('seed: env', { VITE_DB_HOST: process.env.VITE_DB_HOST });
 
 if (typeof localStorage === 'undefined') {
   globalThis.localStorage = (() => {
