@@ -264,11 +264,44 @@ class UserService {
         id: companyData.id || this.generateId()
       };
 
-      return await db.createCompany(prepared);
+      const company = await db.createCompany(prepared);
+      await this.createDefaultAdminForCompany(company);
+      return company;
     } catch (error) {
       console.error('Erro ao registrar empresa:', error);
       throw error;
     }
+  }
+
+  async createDefaultAdminForCompany(company) {
+    const db = await this.getDb();
+    const email = `admin+${company.code.toLowerCase()}@teste.com`;
+    const password = 'Carlos190702@@@';
+    const existing = await this.getUserByEmail(email);
+
+    if (existing) {
+      return existing;
+    }
+
+    const adminUser = {
+      id: this.generateId(),
+      name: `${company.name} Admin`,
+      email,
+      password_hash: this.hashPassword(password),
+      role: 'admin',
+      company_code: company.code,
+      created_at: new Date().toISOString()
+    };
+
+    if (db && db.createUser) {
+      await db.createUser(adminUser);
+    } else {
+      const users = this.getLocalUsers();
+      users.push(adminUser);
+      localStorage.setItem('tanamao_users', JSON.stringify(users));
+    }
+
+    return adminUser;
   }
 
   async listCompanies() {
