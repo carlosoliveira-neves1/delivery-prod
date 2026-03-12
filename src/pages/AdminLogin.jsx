@@ -35,7 +35,8 @@ export default function AdminLogin() {
       }
 
       if (result.success) {
-        navigate('/AdminCompanies');
+        const destination = result.user?.role === 'super_admin' ? '/SuperAdmin' : '/AdminCompanies';
+        navigate(destination);
       } else {
         setErrorMessage(result.error || 'Falha na autenticação');
       }

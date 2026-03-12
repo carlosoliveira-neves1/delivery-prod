@@ -38,7 +38,7 @@ export default function Login() {
       });
 
       if (result.success) {
-        const destination = result.user?.role === "admin" ? "/AdminDashboard" : "/Home";
+        const destination = result.user?.role === "super_admin" ? "/SuperAdmin" : result.user?.role === "admin" ? "/AdminDashboard" : "/Home";
         navigate(destination);
       } else {
         setErrorMessage(result.error || "Não foi possível autenticar.");

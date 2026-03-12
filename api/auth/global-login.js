@@ -43,8 +43,8 @@ export default async function handler(req, res) {
     await ensureConnection();
     console.log('global-login: connected to DB');
 
-    // Permitir login global com qualquer admin de qualquer empresa
-    const userRes = await client.query('SELECT * FROM users WHERE email = $1 AND role = $2', [email, 'admin']);
+    // Permitir login global com qualquer admin ou super_admin de qualquer empresa
+    const userRes = await client.query('SELECT * FROM users WHERE email = $1 AND role IN ($2, $3)', [email, 'admin', 'super_admin']);
     console.log('global-login: user query rows', userRes.rows.length);
     if (userRes.rows.length === 0) {
       return res.status(404).json({ error: 'Admin não encontrado' });

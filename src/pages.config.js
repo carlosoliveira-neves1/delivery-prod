@@ -65,6 +65,7 @@ import StorePreview from './pages/StorePreview';
 import BusinessSetup from './pages/BusinessSetup';
 import AdminCompanies from './pages/AdminCompanies';
 import AdminLogin from './pages/AdminLogin';
+import SuperAdmin from './pages/SuperAdmin';
 import __Layout from './Layout.jsx';
 
 
@@ -81,6 +82,7 @@ export const PAGES = {
     "AdminCRM": AdminCRM,
     "AdminCompanies": AdminCompanies,
     "AdminLogin": AdminLogin,
+    "SuperAdmin": SuperAdmin,
     "Fidelidade": Fidelidade,
     "FidelidadePublica": FidelidadePublica,
     "Login": Login,
