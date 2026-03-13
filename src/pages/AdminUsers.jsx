@@ -69,7 +69,14 @@ export default function AdminUsers() {
     }
   };
 
+  const isAdminImutavel = (role) => role === 'admin_imutavel' || role === 'super_admin';
+
   const toggleUserStatus = (userId) => {
+    const user = users.find(u => u.id === userId);
+    if (isAdminImutavel(user?.role)) {
+      alert('Usuários com perfil "Admin Imutável" ou "Super Admin" não podem ter seu status alterado.');
+      return;
+    }
     setUsers(users.map(user =>
       user.id === userId
         ? { ...user, status: user.status === "active" ? "inactive" : "active" }
@@ -78,6 +85,11 @@ export default function AdminUsers() {
   };
 
   const deleteUser = (userId) => {
+    const user = users.find(u => u.id === userId);
+    if (isAdminImutavel(user?.role)) {
+      alert('Usuários com perfil "Admin Imutável" ou "Super Admin" não podem ser excluídos.');
+      return;
+    }
     if (confirm("Tem certeza que deseja excluir este usuário?")) {
       setUsers(users.filter(user => user.id !== userId));
     }
@@ -85,20 +97,24 @@ export default function AdminUsers() {
 
   const getRoleBadge = (role) => {
     const variants = {
+      super_admin: "bg-purple-100 text-purple-800",
+      admin_imutavel: "bg-orange-100 text-orange-800",
       admin: "bg-red-100 text-red-800",
       manager: "bg-blue-100 text-blue-800",
       user: "bg-gray-100 text-gray-800"
     };
     
     const labels = {
+      super_admin: "Super Admin",
+      admin_imutavel: "Admin Imutável",
       admin: "Administrador",
       manager: "Gerente",
       user: "Usuário"
     };
 
     return (
-      <Badge className={variants[role]}>
-        {labels[role]}
+      <Badge className={variants[role] || "bg-gray-100 text-gray-800"}>
+        {labels[role] || role}
       </Badge>
     );
   };
@@ -242,15 +258,17 @@ export default function AdminUsers() {
                       <Switch
                         checked={user.status === "active"}
                         onCheckedChange={() => toggleUserStatus(user.id)}
+                        disabled={isAdminImutavel(user.role)}
                       />
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" disabled={isAdminImutavel(user.role)}>
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="sm" 
                         onClick={() => deleteUser(user.id)}
-                        className="text-red-600 hover:text-red-700"
+                        disabled={isAdminImutavel(user.role)}
+                        className="text-red-600 hover:text-red-700 disabled:text-gray-400"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
