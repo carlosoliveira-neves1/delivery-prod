@@ -15,6 +15,11 @@ let isConnected = false;
 
 async function ensureConnection() {
   if (!isConnected) {
+    console.log('auth/login: connecting to DB', {
+      host: process.env.DB_HOST,
+      db: process.env.DB_NAME ?? 'delivery_infra',
+      user: process.env.DB_USER
+    });
     await client.connect();
     isConnected = true;
   }
@@ -32,12 +37,22 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('auth/login: env vars', {
+      DB_HOST: process.env.DB_HOST ? 'SET' : 'MISSING',
+      DB_USER: process.env.DB_USER ? 'SET' : 'MISSING',
+      DB_PASSWORD: process.env.DB_PASSWORD ? 'SET' : 'MISSING',
+      DB_NAME: process.env.DB_NAME || 'delivery_infra',
+      DB_PORT: process.env.DB_PORT || 5432,
+    });
+
     await ensureConnection();
+    console.log('auth/login: connected, companyCode', normalizedCode);
 
     const normalizedCode = companyCode.trim().toUpperCase();
 
     // Buscar empresa
     const companyRes = await client.query('SELECT * FROM companies WHERE code = $1', [normalizedCode]);
+    console.log('auth/login: company rows', companyRes.rows.length);
     if (companyRes.rows.length === 0) {
       return res.status(404).json({ error: 'Empresa não encontrada para o código informado' });
     }
@@ -45,6 +60,7 @@ export default async function handler(req, res) {
 
     // Buscar usuário
     const userRes = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+    console.log('auth/login: user rows', userRes.rows.length);
     if (userRes.rows.length === 0) {
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }
@@ -72,6 +88,6 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('API /api/auth/login error:', err);
-    return res.status(500).json({ error: 'Erro interno' });
+    return res.status(500).json({ error: 'Erro interno', details: err.message });
   }
 }
