@@ -38,7 +38,15 @@ export default function Login() {
       });
 
       if (result.success) {
-        const destination = result.user?.role === "super_admin" ? "/SuperAdmin" : result.user?.role === "admin" ? "/AdminDashboard" : "/Home";
+        const role = result.user?.role;
+        let destination = '/Home';
+
+        if (role === 'super_admin') {
+          destination = '/SuperAdmin';
+        } else if (role === 'admin' || role === 'admin_imutavel') {
+          destination = '/AdminDashboard';
+        }
+
         navigate(destination);
       } else {
         setErrorMessage(result.error || "Não foi possível autenticar.");
