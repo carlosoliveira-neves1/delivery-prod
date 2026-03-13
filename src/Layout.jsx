@@ -38,7 +38,7 @@ export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isAdminPage = currentPageName?.startsWith("Admin");
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role === "admin" || user?.role === "admin_imutavel" || user?.role === "super_admin";
 
   // Public pages (customer-facing) - no layout chrome
   if (!isAdminPage) {
