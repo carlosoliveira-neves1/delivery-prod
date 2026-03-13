@@ -45,10 +45,10 @@ export default async function handler(req, res) {
       DB_PORT: process.env.DB_PORT || 5432,
     });
 
+    const normalizedCode = companyCode.trim().toUpperCase();
+
     await ensureConnection();
     console.log('auth/login: connected, companyCode', normalizedCode);
-
-    const normalizedCode = companyCode.trim().toUpperCase();
 
     // Buscar empresa
     const companyRes = await client.query('SELECT * FROM companies WHERE code = $1', [normalizedCode]);
