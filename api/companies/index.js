@@ -32,29 +32,51 @@ export default async function handler(req, res) {
     }
 
     if (method === 'POST') {
-      const { name, code, schema_name = 'public', description } = req.body;
-      if (!name || !code) {
-        return res.status(400).json({ error: 'Nome e código são obrigatórios' });
+      const { name, code, schema_name, description, tax_id, state_registration, legal_name } = req.body;
+      if (!name || !code || !tax_id) {
+        return res.status(400).json({ error: 'Nome, código e CPF/CNPJ são obrigatórios' });
       }
 
       const normalizedCode = code.trim().toUpperCase();
+      const finalSchemaName = schema_name || normalizedCode;
 
+      // Verificar se já existe empresa com este código
       const conflict = await client.query('SELECT id FROM companies WHERE code = $1', [normalizedCode]);
       if (conflict.rows.length > 0) {
         return res.status(409).json({ error: 'Já existe uma empresa com este código' });
       }
 
+      // Verificar se já existe o schema
+      const schemaExists = await client.query(
+        'SELECT schema_name FROM information_schema.schemata WHERE schema_name = $1',
+        [finalSchemaName]
+      );
+      
+      let schemaCreated = false;
+      if (schemaExists.rows.length === 0) {
+        // Criar schema
+        await client.query(`CREATE SCHEMA "${finalSchemaName}"`);
+        schemaCreated = true;
+      }
+
+      // Inserir empresa na tabela companies (schema public)
       const insert = await client.query(
-        `INSERT INTO companies (name, code, schema_name, description)
-         VALUES ($1, $2, $3, $4)
+        `INSERT INTO companies (name, code, schema_name, description, tax_id, state_registration, legal_name)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING *`,
-        [name, normalizedCode, schema_name, description]
+        [name, normalizedCode, finalSchemaName, description, tax_id, state_registration, legal_name]
       );
 
       const company = insert.rows[0];
 
-      // Criar admins padrão
-      await createAdminsForCompany(company);
+      // Se criou schema novo, replicar tabelas e criar admin
+      if (schemaCreated) {
+        await replicateTablesToSchema(finalSchemaName);
+        await createAdminForCompany(company, finalSchemaName);
+      } else {
+        // Schema já existia, criar admin apenas no schema public
+        await createAdminsForCompany(company);
+      }
 
       return res.status(201).json(company);
     }
@@ -67,6 +89,55 @@ export default async function handler(req, res) {
   } finally {
     // Não desconectar aqui para reuso entre requisições (serverless pode manter warm)
   }
+}
+
+async function replicateTablesToSchema(schemaName) {
+  const tables = [
+    'companies', 'users', 'businesses', 'products', 'orders'
+  ];
+
+  for (const table of tables) {
+    // Criar tabela no novo schema com mesma estrutura
+    await client.query(`
+      CREATE TABLE "${schemaName}".${table} 
+      (LIKE public.${table} INCLUDING ALL)
+    `);
+  }
+}
+
+async function createAdminForCompany(company, schemaName) {
+  const passwordHash = Buffer.from('Carlos190702@@@tanamao_salt').toString('base64');
+  const adminEmail = `admin.${company.code}@infratecnologia.com.br`;
+
+  // Inserir admin imutável no schema do tenant
+  await client.query(`
+    INSERT INTO "${schemaName}".users (company_id, name, email, password_hash, role)
+    VALUES ($1, $2, $3, $4, $5)
+    ON CONFLICT (email) DO NOTHING
+  `, [
+    company.id,
+    `${company.name} Admin Imutável`,
+    adminEmail,
+    passwordHash,
+    'admin_imutavel'
+  ]);
+
+  // Inserir empresa no schema do tenant
+  await client.query(`
+    INSERT INTO "${schemaName}".companies (id, name, code, schema_name, description, tax_id, state_registration, legal_name, created_at)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    ON CONFLICT (id) DO NOTHING
+  `, [
+    company.id,
+    company.name,
+    company.code,
+    company.schema_name,
+    company.description,
+    company.tax_id,
+    company.state_registration,
+    company.legal_name,
+    company.created_at
+  ]);
 }
 
 async function createAdminsForCompany(company) {

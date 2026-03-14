@@ -7,6 +7,9 @@ CREATE TABLE IF NOT EXISTS companies (
   code VARCHAR(50) NOT NULL UNIQUE,
   schema_name VARCHAR(255) NOT NULL DEFAULT 'public',
   description TEXT,
+  tax_id VARCHAR(20) NOT NULL, -- CPF ou CNPJ
+  state_registration VARCHAR(20), -- Inscrição Estadual (opcional)
+  legal_name VARCHAR(255), -- Razão Social (opcional)
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
