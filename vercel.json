@@ -3,10 +3,10 @@
   "outputDirectory": "dist",
   "functions": {
     "api/**/*.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node"
     },
     "api/**/*.mjs": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node"
     }
   },
   "rewrites": [
