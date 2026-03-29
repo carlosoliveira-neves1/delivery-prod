@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchStore } from "@/lib/mockApi";
 import { getUserService, initializeUserService } from "@/lib/userService";
 
@@ -47,6 +48,7 @@ export function AuthProvider({ children }) {
     getUserService().logout();
     setUser(null);
     setCompany(null);
+    navigate("/Login");
   };
 
   const navigateToLogin = () => {
