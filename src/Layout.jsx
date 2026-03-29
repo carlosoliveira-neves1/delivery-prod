@@ -29,6 +29,19 @@ const adminPages = [
   { name: "AdminUsers", label: "Usuários", icon: ShieldAlert },
   { name: "Fidelidade", label: "Fidelidade", icon: Gift },
   { name: "AdminIntegrations", label: "Integrações", icon: LayoutDashboard },
+  { name: "AdminSettings", label: "Configurações", icon: Settings },
+];
+
+const globalAdminPages = [
+  { name: "AdminDashboard", label: "Pedidos", icon: ShoppingBag },
+  { name: "AdminProducts", label: "Cardápio", icon: Package },
+  { name: "AdminProductManagement", label: "Produtos", icon: Plus },
+  { name: "AdminPricingTables", label: "Preços", icon: DollarSign },
+  { name: "AdminReports", label: "Relatórios", icon: BarChart3 },
+  { name: "AdminCRM", label: "CRM", icon: Users },
+  { name: "AdminUsers", label: "Usuários", icon: ShieldAlert },
+  { name: "Fidelidade", label: "Fidelidade", icon: Gift },
+  { name: "AdminIntegrations", label: "Integrações", icon: LayoutDashboard },
   { name: "AdminCompanies", label: "Empresas", icon: Building },
   { name: "AdminSettings", label: "Configurações", icon: Settings },
 ];
@@ -39,6 +52,8 @@ export default function Layout({ children, currentPageName }) {
 
   const isAdminPage = currentPageName?.startsWith("Admin");
   const isAdmin = user?.role === "admin" || user?.role === "admin_imutavel" || user?.role === "super_admin";
+  const isGlobalAdmin = user?.role === "super_admin";
+  const menuPages = isGlobalAdmin ? globalAdminPages : adminPages;
 
   // Public pages (customer-facing) - no layout chrome
   if (!isAdminPage) {
@@ -94,7 +109,7 @@ export default function Layout({ children, currentPageName }) {
               <button onClick={() => setSidebarOpen(false)}><X className="w-5 h-5" /></button>
             </div>
             <nav className="flex-1 p-3 space-y-1">
-              {adminPages.map((page) => {
+              {menuPages.map((page) => {
                 const isActive = currentPageName === page.name;
                 return (
                   <Link
@@ -127,11 +142,11 @@ export default function Layout({ children, currentPageName }) {
         {/* Desktop Sidebar */}
         <aside className="hidden lg:flex w-56 flex-col fixed left-0 top-0 bottom-0 bg-white border-r border-gray-100 z-30">
           <div className="p-5 border-b border-gray-100">
-            <h1 className="font-bold text-lg bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">ChegouAí</h1>
-            <p className="text-xs text-gray-500 mt-1">Painel Admin</p>
+            <h1 className="font-bold text-lg text-gray-900">Delivre</h1>
+            <p className="text-xs text-gray-500 mt-1">Seu delivery livre de taxas</p>
           </div>
           <nav className="flex-1 p-3 space-y-1">
-            {adminPages.map((page) => {
+            {menuPages.map((page) => {
               const isActive = currentPageName === page.name;
               return (
                 <Link

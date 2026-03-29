@@ -63,14 +63,15 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
       <Card className="w-full max-w-md shadow-xl border-0">
         <CardHeader className="space-y-1 text-center pb-4 sm:pb-6">
-          <div className="mx-auto w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
-            <ShoppingBag className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+          <div className="mx-auto mb-3 sm:mb-4">
+            <div className="text-4xl sm:text-5xl font-bold text-gray-900">Delivre</div>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">Seu delivery livre de taxas</p>
           </div>
-          <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-            ChegouAí
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-900">
+            Login
           </CardTitle>
           <CardDescription className="text-sm sm:text-base text-gray-500">
-            Seu pedido ChegouAí! Entre com suas credenciais
+            Entre com suas credenciais para acessar
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
