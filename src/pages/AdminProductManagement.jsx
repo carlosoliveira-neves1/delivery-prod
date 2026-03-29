@@ -149,72 +149,74 @@ export default function AdminProductManagement() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
-      {/* Modern Header */}
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-            Gerenciar Produtos
-          </h1>
-          <p className="text-gray-600">Cadastre e gerencie o cardápio do seu estabelecimento</p>
-        </div>
-        <Button 
-          onClick={() => setShowAddProduct(true)} 
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Produto
-        </Button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-3 sm:p-6">
+      {/* Header */}
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Gerenciar Produtos</h1>
+        <p className="text-sm sm:text-base text-gray-600">Cadastre e gerencie o cardápio do seu estabelecimento</p>
       </div>
 
+      {/* Action Button */}
+      {!showAddProduct && !editingProduct && (
+        <div className="mb-4 sm:mb-6">
+          <Button 
+            onClick={() => setShowAddProduct(true)} 
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg w-full sm:w-auto text-sm sm:text-base"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Produto
+          </Button>
+        </div>
+      )}
+
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
         <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm">Total de Produtos</p>
-                <p className="text-2xl font-bold">{products.length}</p>
+                <p className="text-green-100 text-xs sm:text-sm">Total de Produtos</p>
+                <p className="text-xl sm:text-2xl font-bold">{products.length}</p>
               </div>
-              <Package className="w-8 h-8 text-green-200" />
+              <Package className="w-6 h-6 sm:w-8 sm:h-8 text-green-200" />
             </div>
           </CardContent>
         </Card>
         
         <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm">Produtos Ativos</p>
-                <p className="text-2xl font-bold">{products.filter(p => p.available).length}</p>
+                <p className="text-blue-100 text-xs sm:text-sm">Produtos Ativos</p>
+                <p className="text-xl sm:text-2xl font-bold">{products.filter(p => p.available).length}</p>
               </div>
-              <Tag className="w-8 h-8 text-blue-200" />
+              <Tag className="w-6 h-6 sm:w-8 sm:h-8 text-blue-200" />
             </div>
           </CardContent>
         </Card>
         
         <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm">Categorias</p>
-                <p className="text-2xl font-bold">{categories.length}</p>
+                <p className="text-purple-100 text-xs sm:text-sm">Categorias</p>
+                <p className="text-xl sm:text-2xl font-bold">{categories.length}</p>
               </div>
-              <DollarSign className="w-8 h-8 text-purple-200" />
+              <DollarSign className="w-6 h-6 sm:w-8 sm:h-8 text-purple-200" />
             </div>
           </CardContent>
         </Card>
         
         <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-orange-100 text-sm">Preço Médio</p>
-                <p className="text-2xl font-bold">
+                <p className="text-orange-100 text-xs sm:text-sm">Preço Médio</p>
+                <p className="text-xl sm:text-2xl font-bold">
                   R$ {(products.reduce((sum, p) => sum + p.price, 0) / products.length || 0).toFixed(0)}
                 </p>
               </div>
-              <Weight className="w-8 h-8 text-orange-200" />
+              <Weight className="w-6 h-6 sm:w-8 sm:h-8 text-orange-200" />
             </div>
           </CardContent>
         </Card>
@@ -450,40 +452,40 @@ export default function AdminProductManagement() {
 
       {/* Products Table */}
       <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Package className="w-5 h-5" />
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Package className="w-4 h-4 sm:w-5 sm:h-5" />
             Produtos ({filteredProducts.length})
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50/50">
-                  <TableHead>Produto</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Preço</TableHead>
-                  <TableHead>Peso</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
+                  <TableHead className="text-xs sm:text-sm min-w-[200px]">Produto</TableHead>
+                  <TableHead className="text-xs sm:text-sm min-w-[120px]">Categoria</TableHead>
+                  <TableHead className="text-xs sm:text-sm min-w-[80px]">Preço</TableHead>
+                  <TableHead className="text-xs sm:text-sm min-w-[60px]">Peso</TableHead>
+                  <TableHead className="text-xs sm:text-sm min-w-[150px]">Status</TableHead>
+                  <TableHead className="text-right text-xs sm:text-sm min-w-[100px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredProducts.map((product) => (
                   <TableRow key={product.id} className="hover:bg-blue-50/50">
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
                           {product.image ? (
                             <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                           ) : (
-                            <ImageIcon className="w-5 h-5 text-gray-400" />
+                            <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                           )}
                         </div>
-                        <div>
-                          <div className="font-medium text-gray-900">{product.name}</div>
-                          <div className="text-sm text-gray-500 line-clamp-1">{product.description}</div>
+                        <div className="min-w-0">
+                          <div className="font-medium text-gray-900 text-xs sm:text-sm truncate">{product.name}</div>
+                          <div className="text-xs text-gray-500 line-clamp-1">{product.description}</div>
                           {product.sku && (
                             <div className="text-xs text-gray-400">SKU: {product.sku}</div>
                           )}
@@ -491,14 +493,14 @@ export default function AdminProductManagement() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
                         {product.categoryName}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-medium text-green-600">
+                    <TableCell className="font-medium text-green-600 text-xs sm:text-sm">
                       R$ {product.price.toFixed(2).replace(".", ",")}
                     </TableCell>
-                    <TableCell className="text-gray-600">
+                    <TableCell className="text-gray-600 text-xs sm:text-sm">
                       {product.weight ? `${product.weight}g` : "-"}
                     </TableCell>
                     <TableCell>
@@ -506,29 +508,30 @@ export default function AdminProductManagement() {
                         <Switch
                           checked={product.available}
                           onCheckedChange={() => toggleAvailability(product.id)}
+                          className="scale-75 sm:scale-100"
                         />
-                        <Badge className={product.available ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
+                        <Badge className={`text-xs ${product.available ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
                           {product.available ? "Disponível" : "Indisponível"}
                         </Badge>
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1 sm:gap-2">
                         <Button 
                           variant="ghost" 
                           size="sm"
                           onClick={() => handleEditProduct(product)}
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-1 sm:p-2"
                         >
-                          <Edit className="w-4 h-4" />
+                          <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                         </Button>
                         <Button 
                           variant="ghost" 
                           size="sm" 
                           onClick={() => deleteProduct(product.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 sm:p-2"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                         </Button>
                       </div>
                     </TableCell>

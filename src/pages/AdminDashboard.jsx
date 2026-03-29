@@ -96,32 +96,32 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-500">Pedidos hoje</CardTitle>
-            <CardDescription className="text-3xl font-semibold text-gray-900">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-500">Pedidos hoje</CardTitle>
+            <CardDescription className="text-2xl sm:text-3xl font-semibold text-gray-900">
               {totalOrders}
             </CardDescription>
           </CardHeader>
         </Card>
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-500">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-500">
               Faturamento estimado
             </CardTitle>
-            <CardDescription className="text-3xl font-semibold text-gray-900">
+            <CardDescription className="text-2xl sm:text-3xl font-semibold text-gray-900">
               {formatCurrency(totalRevenue)}
             </CardDescription>
           </CardHeader>
         </Card>
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-500">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-500">
               Pedidos em andamento
             </CardTitle>
-            <CardDescription className="text-3xl font-semibold text-gray-900">
+            <CardDescription className="text-2xl sm:text-3xl font-semibold text-gray-900">
               {activeDeliveries}
             </CardDescription>
           </CardHeader>
@@ -129,23 +129,23 @@ export default function AdminDashboard() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Pedidos recentes</CardTitle>
-          <CardDescription>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-lg sm:text-xl">Pedidos recentes</CardTitle>
+          <CardDescription className="text-sm">
             Acompanhe os pedidos do turno e atualize o status conforme o andamento.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="min-w-[120px]">Pedido</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Itens</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead className="min-w-[100px] text-xs sm:text-sm">Pedido</TableHead>
+                  <TableHead className="min-w-[120px] text-xs sm:text-sm">Cliente</TableHead>
+                  <TableHead className="min-w-[80px] text-xs sm:text-sm">Tipo</TableHead>
+                  <TableHead className="min-w-[80px] text-xs sm:text-sm">Total</TableHead>
+                  <TableHead className="min-w-[200px] text-xs sm:text-sm">Itens</TableHead>
+                  <TableHead className="min-w-[150px] text-xs sm:text-sm">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -153,15 +153,15 @@ export default function AdminDashboard() {
                   const statusOption = STATUS_MAP[order.status] ?? STATUS_MAP.pending;
                   return (
                     <TableRow key={order.id}>
-                      <TableCell className="font-medium text-gray-900">{order.id}</TableCell>
-                      <TableCell>{order.customer_name}</TableCell>
+                      <TableCell className="font-medium text-gray-900 text-xs sm:text-sm">{order.id}</TableCell>
+                      <TableCell className="text-xs sm:text-sm">{order.customer_name}</TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="capitalize">
+                        <Badge variant="outline" className="capitalize text-xs">
                           {order.delivery_type === "pickup" ? "Retirada" : "Entrega"}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatCurrency(order.total ?? 0)}</TableCell>
-                      <TableCell className="text-sm text-gray-500">
+                      <TableCell className="text-xs sm:text-sm">{formatCurrency(order.total ?? 0)}</TableCell>
+                      <TableCell className="text-xs text-gray-500">
                         {order.items?.map((item) => `${item.quantity}x ${item.name}`).join(", ")}
                       </TableCell>
                       <TableCell>
@@ -171,11 +171,11 @@ export default function AdminDashboard() {
                             statusMutation.mutate({ id: order.id, status: value })
                           }
                         >
-                          <SelectTrigger className="w-[150px]">
+                          <SelectTrigger className="w-[130px] sm:w-[150px] text-xs sm:text-sm">
                             <SelectValue>
                               <Badge
                                 variant={statusOption?.badge ?? "outline"}
-                                className="w-full justify-center"
+                                className="w-full justify-center text-xs"
                               >
                                 {statusOption?.label ?? order.status}
                               </Badge>
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
                           </SelectTrigger>
                           <SelectContent>
                             {ORDER_STATUS_OPTIONS.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
+                              <SelectItem key={option.value} value={option.value} className="text-xs sm:text-sm">
                                 {option.label}
                               </SelectItem>
                             ))}
