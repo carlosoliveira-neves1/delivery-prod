@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield } from 'lucide-react';
+import DelivreLogo from '@/components/DelivreLogo';
 
 export default function AdminLogin() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -46,11 +47,14 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
       <Card className="w-full max-w-md shadow-xl border-0">
         <CardHeader className="space-y-1 text-center pb-4 sm:pb-6">
-          <div className="mx-auto mb-3 sm:mb-4">
-            <div className="text-4xl sm:text-5xl font-bold text-gray-900">Delivre</div>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1">Seu delivery livre de taxas</p>
+          <div className="mx-auto mb-3 sm:mb-4 flex items-center justify-center gap-3">
+            <DelivreLogo className="w-10 h-10 sm:w-12 sm:h-12" />
+            <div>
+              <div className="text-4xl sm:text-5xl font-bold text-gray-900">Delivre</div>
+              <p className="text-xs sm:text-sm text-gray-500 mt-0">Seu delivery livre de taxas</p>
+            </div>
           </div>
-          <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-900 mt-4">
             Admin
           </CardTitle>
           <CardDescription className="text-sm sm:text-base text-gray-500">
