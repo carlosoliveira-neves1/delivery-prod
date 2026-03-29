@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
     getUserService().logout();
     setUser(null);
     setCompany(null);
-    navigate("/Login");
+    navigate("/", { replace: true });
   };
 
   const navigateToLogin = () => {
