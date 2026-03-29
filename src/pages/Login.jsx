@@ -60,31 +60,31 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
       <Card className="w-full max-w-md shadow-xl border-0">
-        <CardHeader className="space-y-1 text-center pb-6">
-          <div className="mx-auto w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center mb-4">
-            <ShoppingBag className="w-6 h-6 text-white" />
+        <CardHeader className="space-y-1 text-center pb-4 sm:pb-6">
+          <div className="mx-auto w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+            <ShoppingBag className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+          <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
             ChegouAí
           </CardTitle>
-          <CardDescription className="text-gray-500">
+          <CardDescription className="text-sm sm:text-base text-gray-500">
             Seu pedido ChegouAí! Entre com suas credenciais
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-900">
+        <CardContent className="space-y-4">
+          <div className="p-3 sm:p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-xs sm:text-sm text-emerald-900">
             <p className="font-medium">Informe o código da empresa (ex: PAD001) para ativar o schema correto.</p>
           </div>
           {errorMessage && (
-            <div className="mb-3 text-sm text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-md">
+            <div className="text-sm text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-md">
               {errorMessage}
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email" className="text-sm sm:text-base">E-mail</Label>
               <Input
                 id="email"
                 type="email"
@@ -92,12 +92,12 @@ export default function Login() {
                 value={form.email}
                 onChange={(e) => handleChange("email", e.target.value)}
                 required
-                className="h-11"
+                className="h-10 sm:h-11 text-sm sm:text-base"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="companyCode">Código da empresa</Label>
+              <Label htmlFor="companyCode" className="text-sm sm:text-base">Código da empresa</Label>
               <Input
                 id="companyCode"
                 type="text"
@@ -105,61 +105,50 @@ export default function Login() {
                 value={form.companyCode}
                 onChange={(e) => handleChange("companyCode", e.target.value)}
                 required
-                className="h-11"
+                className="h-10 sm:h-11 text-sm sm:text-base"
               />
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Digite sua senha"
-                    value={form.password}
-                    onChange={(e) => handleChange("password", e.target.value)}
-                    required
-                    className="h-11 pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+              <Label htmlFor="password" className="text-sm sm:text-base">Senha</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Digite sua senha"
+                  value={form.password}
+                  onChange={(e) => handleChange("password", e.target.value)}
+                  required
+                  className="h-10 sm:h-11 pr-10 text-sm sm:text-base"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
+            </div>
 
-              <div className="flex items-center justify-between text-sm">
-                <Link to="/forgot-password" className="text-blue-600 hover:underline">
-                  Esqueceu a senha?
-                </Link>
-              </div>
+            <div className="flex items-center justify-between text-xs sm:text-sm">
+              <Link to="/forgot-password" className="text-blue-600 hover:underline">
+                Esqueceu a senha?
+              </Link>
+            </div>
 
             <Button 
               type="submit" 
-              className="w-full h-11 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              className="w-full h-10 sm:h-11 text-sm sm:text-base bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
               disabled={isLoading}
             >
               {isLoading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
-        </CardContent>
-      </Card>
 
-      {/* Register Link */}
-      <Card className="border-0 shadow-lg mt-4">
-        <CardContent className="pt-6">
-          <div className="text-center space-y-3">
-            <p className="text-sm text-gray-600">
-              Não tem uma conta?
-            </p>
-            <Link to="/Register">
-              <Button variant="outline" className="w-full h-11">
-                <UserPlus className="w-4 h-4 mr-2" />
-                Cadastre-se
-              </Button>
+          <div className="flex items-center justify-between text-xs sm:text-sm pt-2 border-t border-gray-200">
+            <Link to="/Register" className="text-green-600 hover:text-green-700 font-medium">
+              Cadastre-se
             </Link>
           </div>
         </CardContent>
