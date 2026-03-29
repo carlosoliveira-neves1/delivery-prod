@@ -66,8 +66,9 @@ export function AuthProvider({ children }) {
       store,
       isLoadingPublicSettings,
       navigateToLogin,
+      isLoggedOut,
     }),
-    [user, company, isLoadingAuth, authError, store, isLoadingPublicSettings]
+    [user, company, isLoadingAuth, authError, store, isLoadingPublicSettings, isLoggedOut]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
