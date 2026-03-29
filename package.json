@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "vite preview",
+    "start": "node server.mjs",
+    "server": "node server.mjs",
     "db:connect": "node scripts/connect-db.mjs",
     "db:init": "node scripts/apply-schema.mjs",
     "db:setup": "node scripts/setup-database.mjs"
@@ -22,6 +23,8 @@
     "@tanstack/react-query": "^5.27.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "framer-motion": "^11.0.0",
     "lucide-react": "^0.378.0",
     "react": "^18.2.0",
