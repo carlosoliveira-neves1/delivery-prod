@@ -6,6 +6,7 @@ import { getUserService, initializeUserService } from "@/lib/userService";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [company, setCompany] = useState(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
@@ -66,9 +67,8 @@ export function AuthProvider({ children }) {
       store,
       isLoadingPublicSettings,
       navigateToLogin,
-      isLoggedOut,
     }),
-    [user, company, isLoadingAuth, authError, store, isLoadingPublicSettings, isLoggedOut]
+    [user, company, isLoadingAuth, authError, store, isLoadingPublicSettings]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
