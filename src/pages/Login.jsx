@@ -105,11 +105,11 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="companyCode" className="text-sm sm:text-base">Código da empresa</Label>
+              <Label htmlFor="companyCode" className="text-sm sm:text-base">Empresa</Label>
               <Input
                 id="companyCode"
                 type="text"
-                placeholder="PAD001"
+                placeholder="DELIV001"
                 value={form.companyCode}
                 onChange={(e) => handleChange("companyCode", e.target.value)}
                 required
