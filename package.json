@@ -8,9 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "vite preview",
-    "db:connect": "node scripts/connect-db.mjs"
-    ,
-    "db:init": "node scripts/apply-schema.mjs"
+    "db:connect": "node scripts/connect-db.mjs",
+    "db:init": "node scripts/apply-schema.mjs",
+    "db:setup": "node scripts/setup-database.mjs"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.8",
