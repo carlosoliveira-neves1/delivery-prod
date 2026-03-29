@@ -5,7 +5,7 @@ import { getUserService, initializeUserService } from "@/lib/userService";
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
+function AuthProviderContent({ children }) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [company, setCompany] = useState(null);
@@ -72,6 +72,10 @@ export function AuthProvider({ children }) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function AuthProvider({ children }) {
+  return <AuthProviderContent>{children}</AuthProviderContent>;
 }
 
 export function useAuth() {
