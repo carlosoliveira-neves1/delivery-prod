@@ -75,8 +75,14 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg text-xs sm:text-sm text-blue-900">
+            <p className="font-medium mb-2">📋 Credenciais de Teste:</p>
+            <p className="text-xs sm:text-sm"><strong>Email:</strong> admin@delivery.com</p>
+            <p className="text-xs sm:text-sm"><strong>Senha:</strong> teste12345678</p>
+            <p className="text-xs sm:text-sm"><strong>Empresa:</strong> DELIV001</p>
+          </div>
           <div className="p-3 sm:p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-xs sm:text-sm text-emerald-900">
-            <p className="font-medium">Informe o código da empresa (ex: PAD001) para ativar o schema correto.</p>
+            <p className="font-medium">Informe o código da empresa (ex: DELIV001) para ativar o schema correto.</p>
           </div>
           {errorMessage && (
             <div className="text-sm text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-md">
