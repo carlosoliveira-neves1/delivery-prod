@@ -32,8 +32,8 @@ export default async function handler(req, res) {
   }
 
   const { email, password, companyCode } = req.body;
-  if (!email || !password || !companyCode) {
-    return res.status(400).json({ error: 'E-mail, senha e código da empresa são obrigatórios' });
+  if (!email || !password) {
+    return res.status(400).json({ error: 'E-mail e senha são obrigatórios' });
   }
 
   try {
@@ -45,18 +45,21 @@ export default async function handler(req, res) {
       DB_PORT: process.env.DB_PORT || 5432,
     });
 
-    const normalizedCode = companyCode.trim().toUpperCase();
-
     await ensureConnection();
-    console.log('auth/login: connected, companyCode', normalizedCode);
+    console.log('auth/login: connected');
 
-    // Buscar empresa
-    const companyRes = await client.query('SELECT * FROM companies WHERE code = $1', [normalizedCode]);
-    console.log('auth/login: company rows', companyRes.rows.length);
-    if (companyRes.rows.length === 0) {
-      return res.status(404).json({ error: 'Empresa não encontrada para o código informado' });
+    let company = null;
+    
+    // Se companyCode fornecido, buscar empresa
+    if (companyCode) {
+      const normalizedCode = companyCode.trim().toUpperCase();
+      const companyRes = await client.query('SELECT * FROM companies WHERE code = $1', [normalizedCode]);
+      console.log('auth/login: company rows', companyRes.rows.length);
+      if (companyRes.rows.length === 0) {
+        return res.status(404).json({ error: 'Empresa não encontrada para o código informado' });
+      }
+      company = companyRes.rows[0];
     }
-    const company = companyRes.rows[0];
 
     // Buscar usuário
     const userRes = await client.query('SELECT * FROM users WHERE email = $1', [email]);
@@ -72,19 +75,19 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Senha incorreta' });
     }
 
-    // Verificar se usuário pertence à empresa
-    if (user.company_id !== company.id) {
+    // Se tem company, verificar se usuário pertence à empresa
+    if (company && user.company_id !== company.id) {
       return res.status(403).json({ error: 'Usuário não pertence a esta empresa' });
     }
 
     // Retornar dados de sessão (sem hash)
     const { password_hash, ...userSession } = user;
-    const { schema_name, ...companySession } = company;
+    const { schema_name, ...companySession } = company || {};
 
     return res.status(200).json({
       success: true,
       user: userSession,
-      company: companySession
+      company: company || null
     });
   } catch (err) {
     console.error('API /api/auth/login error:', err);
