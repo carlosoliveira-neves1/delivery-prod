@@ -95,14 +95,10 @@ class UserService {
     }
   }
 
-  // Login do usuário
-  async loginUser(email, password, companyCode) {
+  // Login do usuário (companyCode agora opcional para novos usuários)
+  async loginUser(email, password, companyCode = null) {
     try {
-      const normalizedCode = this.normalizeCompanyCode(companyCode);
-
-      if (!normalizedCode) {
-        throw new Error('Informe o código da empresa para prosseguir');
-      }
+      const normalizedCode = companyCode ? this.normalizeCompanyCode(companyCode) : null;
 
       if (this.useApi) {
         const { api } = await import('./apiClient.js');
@@ -118,11 +114,8 @@ class UserService {
 
       // Fallback localStorage
       const db = await this.getDb();
-      const company = await db.getCompanyByCode(normalizedCode);
-      if (!company) {
-        throw new Error('Empresa não encontrada para o código informado');
-      }
-
+      
+      // Buscar usuário por email
       const user = await this.getUserByEmail(email);
       
       if (!user) {
@@ -133,8 +126,16 @@ class UserService {
         throw new Error('Senha incorreta');
       }
 
-      if (user.company_code && user.company_code !== company.code) {
-        throw new Error('Usuário não pertence a esta empresa');
+      // Se tem companyCode, validar empresa
+      let company = null;
+      if (normalizedCode) {
+        company = await db.getCompanyByCode(normalizedCode);
+        if (!company) {
+          throw new Error('Empresa não encontrada para o código informado');
+        }
+        if (user.company_code && user.company_code !== company.code) {
+          throw new Error('Usuário não pertence a esta empresa');
+        }
       }
 
       this.currentUser = {
@@ -148,7 +149,9 @@ class UserService {
 
       // Salvar sessão
       localStorage.setItem('tanamao_current_user', JSON.stringify(this.currentUser));
-      localStorage.setItem('tanamao_current_company', JSON.stringify(company));
+      if (company) {
+        localStorage.setItem('tanamao_current_company', JSON.stringify(company));
+      }
 
       return { success: true, user: this.currentUser, company };
     } catch (error) {
@@ -175,7 +178,7 @@ class UserService {
     }
   }
 
-  // Criar negócio do usuário
+  // Criar negócio do usuário (marca como trial)
   async createUserBusiness(userId, businessData) {
     if (this.useApi) {
       // TODO: implementar API para negócios
@@ -185,6 +188,10 @@ class UserService {
 
     try {
       const businessId = this.generateId();
+      
+      // Calcular data de expiração (45 dias)
+      const trialEndsAt = new Date();
+      trialEndsAt.setDate(trialEndsAt.getDate() + 45);
       
       const newBusiness = {
         id: businessId,
@@ -196,6 +203,8 @@ class UserService {
         address: businessData.address,
         template_config: businessData.template,
         is_active: true,
+        is_trial: true,  // Marca como trial
+        trial_ends_at: trialEndsAt.toISOString(),  // Data de expiração
         created_at: new Date().toISOString()
       };
 
@@ -205,6 +214,30 @@ class UserService {
     } catch (error) {
       console.error('Erro ao criar negócio:', error);
       throw error;
+    }
+  }
+
+  // Limpar negócios trial expirados (chamar periodicamente)
+  async cleanupExpiredTrials() {
+    try {
+      const db = await this.getDb();
+      const businesses = await db.getAllBusinesses();
+      
+      const now = new Date();
+      const expiredBusinesses = businesses.filter(b => {
+        if (!b.is_trial || !b.trial_ends_at) return false;
+        return new Date(b.trial_ends_at) < now;
+      });
+
+      for (const business of expiredBusinesses) {
+        await db.deleteBusiness(business.id);
+        console.log(`Negócio trial expirado removido: ${business.business_name} (ID: ${business.id})`);
+      }
+
+      return expiredBusinesses.length;
+    } catch (error) {
+      console.error('Erro ao limpar trials expirados:', error);
+      return 0;
     }
   }
 
@@ -405,6 +438,24 @@ class UserService {
       stats[type] = (stats[type] || 0) + 1;
     });
     return stats;
+  }
+
+  // Marcar negócio como ativo (quando pagar/confirmar)
+  async activateBusiness(businessId) {
+    try {
+      const db = await this.getDb();
+      const business = await db.getBusinessById(businessId);
+      if (business) {
+        business.is_trial = false;
+        business.trial_ends_at = null;
+        business.activated_at = new Date().toISOString();
+        await db.updateBusiness(business);
+      }
+      return business;
+    } catch (error) {
+      console.error('Erro ao ativar negócio:', error);
+      throw error;
+    }
   }
 }
 

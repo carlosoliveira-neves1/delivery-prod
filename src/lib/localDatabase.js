@@ -94,6 +94,34 @@ class LocalDatabase {
     }
   }
 
+  async updateBusiness(id, businessData) {
+    try {
+      const businesses = JSON.parse(localStorage.getItem('chegouai_businesses') || '[]');
+      const index = businesses.findIndex(b => b.id === id);
+      if (index !== -1) {
+        businesses[index] = { ...businesses[index], ...businessData, updated_at: new Date().toISOString() };
+        localStorage.setItem('chegouai_businesses', JSON.stringify(businesses));
+        return businesses[index];
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao atualizar negócio:', error);
+      throw error;
+    }
+  }
+
+  async deleteBusiness(id) {
+    try {
+      const businesses = JSON.parse(localStorage.getItem('chegouai_businesses') || '[]');
+      const filtered = businesses.filter(b => b.id !== id);
+      localStorage.setItem('chegouai_businesses', JSON.stringify(filtered));
+      return true;
+    } catch (error) {
+      console.error('Erro ao deletar negócio:', error);
+      throw error;
+    }
+  }
+
   // Métodos para produtos
   async createProduct(productData) {
     try {
