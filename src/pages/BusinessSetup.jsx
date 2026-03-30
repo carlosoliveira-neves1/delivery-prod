@@ -205,12 +205,44 @@ export default function BusinessSetup() {
       const userService = getUserService();
       await userService.initialize();
       
-      const currentUser = userService.getCurrentUser();
+      // Verificar se há usuário na sessão
+      let currentUser = userService.getCurrentUser();
+      
+      // Se não houver usuário na sessão, tentar recuperar do localStorage diretamente
+      if (!currentUser) {
+        const savedUser = localStorage.getItem('tanamao_current_user');
+        if (savedUser) {
+          currentUser = JSON.parse(savedUser);
+          console.log("Usuário recuperado do localStorage:", currentUser);
+        }
+      }
+      
+      // Se ainda não houver usuário, verificar se há dados de registro recente
+      if (!currentUser) {
+        // Tentar encontrar o último usuário criado no localStorage
+        const users = JSON.parse(localStorage.getItem('tanamao_users') || '[]');
+        if (users.length > 0) {
+          // Pegar o último usuário criado
+          const lastUser = users[users.length - 1];
+          currentUser = {
+            id: lastUser.id,
+            name: lastUser.name,
+            email: lastUser.email,
+            role: lastUser.role
+          };
+          // Salvar na sessão
+          localStorage.setItem('tanamao_current_user', JSON.stringify(currentUser));
+          console.log("Usuário recuperado da lista de usuários:", currentUser);
+        }
+      }
+      
       if (!currentUser) {
         alert("Erro: Usuário não encontrado. Faça login novamente.");
         window.location.href = "/Login";
         return;
       }
+
+      console.log("Criando negócio para usuário:", currentUser.id);
 
       // Criar negócio no banco/localStorage
       const businessConfig = {
@@ -243,7 +275,7 @@ export default function BusinessSetup() {
       
     } catch (error) {
       console.error("Erro ao configurar negócio:", error);
-      alert("Erro ao configurar negócio. Tente novamente.");
+      alert("Erro ao configurar negócio: " + error.message);
     }
   };
 

@@ -52,9 +52,16 @@ export default function Register() {
         // Fazer login automático com dados do usuário
         const loginResult = await userService.loginUser(form.email, form.password);
         
-        // Atualizar contexto de autenticação
-        const { useAuth } = await import("@/lib/AuthContext");
-        // Note: Em uma implementação real, isso seria feito através do contexto
+        if (!loginResult.success) {
+          alert("Erro ao fazer login automático: " + loginResult.error);
+          window.location.href = "/Login";
+          return;
+        }
+        
+        console.log("Login automático bem-sucedido:", loginResult.user);
+        
+        // Aguardar um momento para garantir que a sessão foi salva
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // Redirecionar para configuração do negócio
         window.location.href = "/BusinessSetup";
